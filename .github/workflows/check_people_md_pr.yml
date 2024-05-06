@@ -12,16 +12,24 @@ jobs:
     env:
       Approve: true
       MERGE_LABELS: ""
+      ADDED_FILES_COUNT: ''
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Count Added Files
+        id: count-files
+        run: |
+          echo "ADDED_FILES_COUNT=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | wc -l)" >> $GITHUB_ENV
+          echo "$ADDED_FILES_COUNT new file(s) were added"
+
       - name: Check if only one file was added in the pr
-        if: github.event.pull_request.additions != 1
+        if: env.ADDED_FILES_COUNT  != '1'
         run: |
           echo "Error! Expected exactly 1 file to be added." >> $GITHUB_OUTPUT
           echo "Approve=false" >> $GITHUB_ENV
           exit 1
+
       - id: automerge
         name: automerge
         uses: "pascalgn/automerge-action@v0.16.3"
