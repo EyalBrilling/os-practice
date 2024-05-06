@@ -20,7 +20,8 @@ jobs:
       - name: Count Added Files
         id: count-files
         run: |
-          echo "ADDED_FILES_COUNT=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | wc -l)" >> $GITHUB_ENV
+          ADDED_FILES_COUNT=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | wc -l)
+          echo "ADDED_FILES_COUNT=$ADDED_FILES_COUNT >> $GITHUB_ENV
           echo "$ADDED_FILES_COUNT new file(s) were added"
 
       - name: Check if only one file was added in the pr
